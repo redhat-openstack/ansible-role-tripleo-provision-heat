@@ -1,0 +1,4 @@
+- name: clean up heat stack and uploaded image
+  hosts: localhost
+  roles:
+    - { role: provision-heat/roles/cleanup }

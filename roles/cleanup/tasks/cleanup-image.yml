@@ -1,0 +1,18 @@
+---
+- name: get image ID
+  shell: >
+    export OS_AUTH_URL="{{ os_auth_url }}";
+    export OS_USERNAME="{{ os_username }}";
+    export OS_PASSWORD="{{ os_password }}";
+    export OS_TENANT_NAME="{{ os_tenant_name }}";
+    glance image-list | grep {{ prefix }}{{ release }}-undercloud.qcow2 | cut -d'|' -f2
+  register: undercloud_image_id
+
+- name: remove undercloud.qcow2 image with unique name
+  shell: >
+    export OS_AUTH_URL="{{ os_auth_url }}";
+    export OS_USERNAME="{{ os_username }}";
+    export OS_PASSWORD="{{ os_password }}";
+    export OS_TENANT_NAME="{{ os_tenant_name }}";
+    glance image-delete {{ undercloud_image_id.stdout }}
+

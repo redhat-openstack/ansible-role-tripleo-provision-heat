@@ -1,0 +1,78 @@
+---
+- name: Copy deploy stack parameters template
+  template:
+      src: env.yaml.j2
+      dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
+      mode: 0755
+
+- name: Add keypair
+  shell: >
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      nova keypair-add --pub-key ~/.ssh/id_rsa.pub {{ prefix }}key
+  ignore_errors: true
+
+- name: Deploy stack
+  os_stack:
+      name: "{{ stack_name }}"
+      auth:
+          username: "{{ os_username }}"
+          password: "{{ os_password }}"
+          project_name: "{{ os_tenant_name }}"
+          auth_url: "{{ os_auth_url }}"
+      state: present
+      template: "{{ heat_template }}"
+      environment: "{{ environment }}"
+  register: stack_deployment
+  ignore_errors: true
+
+- name: Show stack deployment information
+  shell: >
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      heat stack-show {{ stack_name }}
+  when: stack_deployment.result is not defined
+
+- name: set fact for undercloud floating IP address
+  set_fact:
+    undercloud_ip="{{ stack_deployment.stack.outputs[0].output_value }}"
+
+- name: Add provisioned undercloud host
+  add_host:
+      name: undercloud
+      hostname: "{{ undercloud_ip }}"
+      groups: "{{ node_groups| join(',') }}"
+      ansible_ssh_host: "{{ undercloud_ip }}"
+      ansible_fqdn: undercloud
+      ansible_ssh_user: stack
+      ansible_private_key_file: "{{ undercloud_key }}"
+      ansible_ssh_extra_args: "{{ ssh_extra_args }}"
+      undercloud_ip: "{{ undercloud_ip }}"
+
+- name: Wait for provisioned host to become reachable
+  command:
+      ssh -o BatchMode=yes -o "StrictHostKeyChecking=no" root@{{ undercloud_ip }} -i "{{ undercloud_key }}"
+  register: result
+  until: result|success
+  retries: 300
+  delay: 5
+
+- name: Build nodes.json file to be used as instackenv.json
+  shell: >
+      chdir={{ local_working_dir }}
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml
+  register: nodes_json
+
+- name: Copy the network-environment.yaml
+  copy:
+      src: "{{ network_environment_file }}"
+      dest: "{{ network_env_file_dest }}"
+      mode: 0755

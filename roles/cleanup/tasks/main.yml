@@ -1,0 +1,7 @@
+---
+- include: cleanup-stack.yml
+
+- when: remove_image_from_host_cloud
+  block:
+
+    - include: cleanup-image.yml

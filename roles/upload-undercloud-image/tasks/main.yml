@@ -1,0 +1,82 @@
+---
+- name: Ensure local working dir exists
+  file:
+    path: "{{ local_working_dir }}"
+
+- name: generate prefix for all run-related entities
+  set_fact:
+    prefix="{{ tmp.node_prefix }}"
+
+- when:  get_latest_image == 'use_existing'
+  block:
+
+    - name: get the latest uploaded image
+      shell: >
+          export OS_AUTH_URL="{{ os_auth_url }}";
+          export OS_USERNAME="{{ os_username }}";
+          export OS_PASSWORD="{{ os_password }}";
+          export OS_TENANT_NAME="{{ os_tenant_name }}";
+          glance image-list --sort-key 'created_at' | grep "{{ release }}-undercloud.qcow2" | head -n1 | cut -d'|' -f3 | sed 's/ //g'
+      register: latest_undercloud_image_name
+
+    - name: set fact for undercloud image
+      set_fact: latest_undercloud_image="{{ latest_undercloud_image_name.stdout }}"
+
+    - name: copy key inserted in image to undercloud_key location
+      copy:
+          src: "{{ existing_key_location }}/{{ item }}"
+          dest: "{{ local_working_dir }}/{{ item }}"
+          mode: 0600
+      with_items:
+         - id_rsa_undercloud
+         - id_rsa_undercloud.pub
+
+- when: get_latest_image == 'upload'
+  block:
+
+    - name: get the latest undercloud.qcow2 image
+      get_url:
+          url: "{{ undercloud_image_url }}"
+          dest: "{{ local_working_dir }}/{{ prefix }}undercloud.qcow2"
+
+    # Create ssh keypairs.
+    # `undercloud_key` is used to log in to the undercloud.
+    - name: Generate ssh keys
+      command: >
+          ssh-keygen -f '{{ undercloud_key }}' -N ''
+          -C 'ansible_generated_undercloud'
+          -t rsa -b 4096
+      args:
+        creates: "{{ undercloud_key }}"
+
+    # Copy the public key to `$HOME/.ssh/authorized_keys` for the `root`
+    # and `stack` user on the undercloud.
+    - name: Inject undercloud ssh public key to appliance
+      command: >
+          virt-customize -a {{ local_working_dir }}/{{ prefix }}undercloud.qcow2
+          --mkdir {{ item.homedir }}/.ssh/
+          --upload '{{ undercloud_key }}.pub:{{ item.homedir }}/.ssh/authorized_keys'
+          --run-command 'chown -R {{ item.owner }}:{{ item.group }} {{ item.homedir }}/.ssh'
+          --run-command 'chmod 0700 {{ item.homedir }}/.ssh'
+          --run-command 'chmod 0600 {{ item.homedir }}/.ssh/authorized_keys'
+      environment:
+          LIBGUESTFS_BACKEND: direct
+      with_items:
+          - homedir: /root
+            owner: root
+            group: root
+          - homedir: /home/stack
+            owner: stack
+            group: stack
+
+    - name: upload latest undercloud.qcow2 image with unique name
+      shell: >
+        export OS_AUTH_URL="{{ os_auth_url }}";
+        export OS_USERNAME="{{ os_username }}";
+        export OS_PASSWORD="{{ os_password }}";
+        export OS_TENANT_NAME="{{ os_tenant_name }}";
+        glance image-create --name {{ prefix }}{{ release }}-undercloud.qcow2 \
+        --disk-format qcow2 --container-format bare < {{ local_working_dir }}/{{ prefix }}undercloud.qcow2
+
+    - name: set fact for undercloud image
+      set_fact: latest_undercloud_image="{{ prefix }}{{ release }}-undercloud.qcow2"

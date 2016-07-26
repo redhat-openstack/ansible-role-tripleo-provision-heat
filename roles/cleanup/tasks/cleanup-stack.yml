@@ -1,0 +1,20 @@
+- name: Remove stack
+  os_stack:
+      name: "{{ stack_name }}"
+      auth:
+          username: "{{ os_username }}"
+          password: "{{ os_password }}"
+          project_name: "{{ os_tenant_name }}"
+          auth_url: "{{ os_auth_url }}"
+      state: absent
+  ignore_errors: true
+
+- name: Remove associated keypair
+  shell: >
+      export OS_USERNAME="{{ os_username }}";
+      export OS_PASSWORD="{{ os_password }}";
+      export OS_TENANT_NAME="{{ os_tenant_name }}";
+      export OS_AUTH_URL="{{ os_auth_url }}";
+      nova keypair-delete {{ prefix }}key
+  ignore_errors: true
+
