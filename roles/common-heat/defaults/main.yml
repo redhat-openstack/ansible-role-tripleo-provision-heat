@@ -31,7 +31,7 @@ node_groups:
 templates_dir: "{{ local_working_dir }}/openstack-virtual-baremetal/templates"
 ovb_dir: "{{ local_working_dir }}/openstack-virtual-baremetal"
 heat_template: "{{ templates_dir }}/quintupleo.yaml"
-environment:
+environment_list:
     - "{{ templates_dir }}/resource-registry.yaml"
     - "{{ local_working_dir }}/{{ prefix }}env.yaml"
 

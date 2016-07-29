@@ -24,7 +24,7 @@
           auth_url: "{{ os_auth_url }}"
       state: present
       template: "{{ heat_template }}"
-      environment: "{{ environment }}"
+      environment: "{{ environment_list }}"
   register: stack_deployment
   ignore_errors: true
 
