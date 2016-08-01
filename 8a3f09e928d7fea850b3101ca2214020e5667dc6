@@ -1,0 +1,7 @@
+Code-Review+2: Ronelle Landy <rlandy@redhat.com>
+Verified+1: Ronelle Landy <rlandy@redhat.com>
+Submitted-by: Ronelle Landy <rlandy@redhat.com>
+Submitted-at: Mon, 01 Aug 2016 16:34:46 -0400
+Reviewed-on: https://review.gerrithub.io/285978
+Project: redhat-openstack/ansible-role-tripleo-provision-heat
+Branch: refs/heads/master
