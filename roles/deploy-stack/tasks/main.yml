@@ -71,6 +71,12 @@
       {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml
   register: nodes_json
 
+- name: Ensure directories exist for network-environment copy
+  file:
+      path: "{{ network_env_file_dest }}"
+      state: directory
+      mode: 0755
+
 - name: Copy the network-environment.yaml
   copy:
       src: "{{ network_environment_file }}"
