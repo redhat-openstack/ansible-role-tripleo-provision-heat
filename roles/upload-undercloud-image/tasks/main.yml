@@ -34,10 +34,30 @@
 - when: get_latest_image == 'upload'
   block:
 
-    - name: get the latest undercloud.qcow2 image
-      get_url:
-          url: "{{ undercloud_image_url }}"
-          dest: "{{ local_working_dir }}/{{ prefix }}undercloud.qcow2"
+    - name: Get the latest undercloud.qcow2 image
+      command: >
+        curl -sf -C- -o {{ prefix }}undercloud.qcow2 {{ undercloud_image_url }}
+      register: curl_result
+      until: curl_result.rc not in [18, 56]
+      retries: 20
+      delay: 5
+
+    - name: Get image expected checksum
+      command: >
+        curl -sf {{ undercloud_image_url }}.md5
+      register: md5_expected
+
+    - name: Get actual md5 checksum of image
+      command: >
+        md5sum {{ prefix }}undercloud.qcow2
+      register: md5_actual
+
+    - name: Verify image checksum
+      fail:
+        msg: image checksum does not match
+      when: >
+        md5_expected.stdout.split()[0] !=
+        md5_actual.stdout.split()[0]
 
     # Create ssh keypairs.
     # `undercloud_key` is used to log in to the undercloud.
