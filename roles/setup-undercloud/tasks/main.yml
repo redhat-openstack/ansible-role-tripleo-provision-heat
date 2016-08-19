@@ -14,34 +14,14 @@
     src="{{ local_working_dir }}/nodes.json"
     dest="{{ working_dir }}/instackenv.json"
 
-- name: Configure external interface
-  become: yes
-  shell: >
-       ifconfig {{ external_interface }} {{ external_interface_ip }} netmask {{ external_interface_netmask }}
+- name: Copy over setup undercloud connectivity script template
+      template:
+        src: setup-undercloud-connectivity.sh.j2
+        dest: "{{ working_dir }}/setup-undercloud-connectivity.sh"
+        mode: 0755
 
-- name: Get mac address of external interface
-  shell: >
-      ifconfig | grep -n3 {{ external_interface }} | grep -A1 ether | cut -d " " -f 10
-  register: mac_addr_external_interface
+    - name: Setup interfaces, connectivity on the undercloud
+      become: yes
+      shell: >
+        "{{ working_dir }}"/setup-undercloud-connectivity.sh
 
-- name: set-fact for external interface mac address
-  set_fact: mac_address_external_interface="{{ mac_addr_external_interface.stdout }}"
-
-- name: Copy template for external interface
-  template:
-      src: ifcfg-external-interface.j2
-      dest: "/etc/sysconfig/network-scripts/ifcfg-{{ external_interface }}"
-      mode: 0644
-
-- name: Set MTU values
-  become: yes
-  shell: >
-      ip link set {{ item }} mtu {{ mtu }};
-      echo "MTU={{ mtu }}" >> /etc/sysconfig/network-scripts/ifcfg-{{ item }}
-  with_items: "{{ mtu_interface }}"
-
-- name: add nameserver to resolv.conf
-  become: yes
-  lineinfile:
-    dest: /etc/resolv.conf
-    line: nameserver {{ pvt_nameserver }}
