@@ -36,7 +36,7 @@
 
     - name: Get the latest undercloud.qcow2 image
       command: >
-        curl -sf -C- -o {{ prefix }}undercloud.qcow2 {{ undercloud_image_url }}
+        curl -C- -o {{ prefix }}undercloud.qcow2 {{ undercloud_image_url }}
       args:
         chdir: "{{ local_working_dir }}"
       register: curl_result
