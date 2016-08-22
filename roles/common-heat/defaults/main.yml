@@ -4,7 +4,7 @@ local_working_dir: "{{ lookup('env', 'HOME') }}/.quickstart"
 working_dir: /home/stack
 
 release: mitaka
-undercloud_image_url: "http://artifacts.ci.centos.org/rdo/images/{{ release }}/delorean/stable/undercloud.qcow2"
+undercloud_image_url: "http://buildlogs.cdn.centos.org/centos/7/cloud/x86_64/tripleo_images/{{ release }}/delorean/undercloud.qcow2"
 undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
 
 node:
