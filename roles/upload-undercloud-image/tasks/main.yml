@@ -71,6 +71,7 @@
           -C 'ansible_generated_undercloud'
           -t rsa -b 4096
       args:
+        chdir: "{{ local_working_dir }}"
         creates: "{{ undercloud_key }}"
 
     # Copy the public key to `$HOME/.ssh/authorized_keys` for the `root`
