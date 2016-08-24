@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_19cd8ab7",
+        "filename": "doc/tripleo-quickstart-on-ovb.rst",
+        "patchSetId": 8
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000586
+      },
+      "writtenOn": "2016-08-24T17:11:10Z",
+      "side": 1,
+      "message": "running tripleo-quickstart with instances provisioned from an openstack cloud.",
+      "range": {
+        "startLine": 12,
+        "startChar": 38,
+        "endLine": 12,
+        "endChar": 73
+      },
+      "revId": "46559998fe87353c3d814ccbf0ad3676686d72d4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
