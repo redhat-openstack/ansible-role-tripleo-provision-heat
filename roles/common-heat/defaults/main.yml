@@ -37,7 +37,7 @@ environment_list:
 
 get_latest_image: 'upload'
 existing_key_location: '{{ local_working_dir }}'
-remove_image_from_host_cloud: true
+remove_image_from_host_cloud: false
 
 bmc_flavor: m1.medium
 bmc_image: 'bmc-base'

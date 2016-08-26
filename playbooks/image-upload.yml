@@ -1,0 +1,4 @@
+- name: upload undercloud image to OVB cloud
+  hosts: localhost
+  roles:
+    - { role: provision-heat/roles/upload-undercloud-image }
