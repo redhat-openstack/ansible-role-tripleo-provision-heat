@@ -13,6 +13,7 @@
       export OS_AUTH_URL="{{ os_auth_url }}";
       nova keypair-add --pub-key ~/.ssh/id_rsa.pub {{ prefix }}key
   ignore_errors: true
+  no_log: true
 
 - name: Deploy stack
   os_stack:
@@ -36,6 +37,7 @@
       export OS_AUTH_URL="{{ os_auth_url }}";
       heat stack-show {{ stack_name }}
   when: stack_deployment.result is not defined
+  no_log: true
 
 - name: set fact for undercloud floating IP address
   set_fact:
@@ -70,6 +72,7 @@
       export OS_AUTH_URL="{{ os_auth_url }}";
       {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml
   register: nodes_json
+  no_log: true
 
 - name: Ensure directories exist for network-environment copy
   file:
