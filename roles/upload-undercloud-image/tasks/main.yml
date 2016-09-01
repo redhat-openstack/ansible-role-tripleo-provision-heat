@@ -47,7 +47,7 @@
 
     - name: Get image expected checksum
       command: >
-        curl -sf {{ undercloud_image_url }}.md5
+        curl -sf -L {{ undercloud_image_url }}.md5
       register: md5_expected
 
     - name: Get actual md5 checksum of image
