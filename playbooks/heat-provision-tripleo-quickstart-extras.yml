@@ -7,7 +7,11 @@
   roles:
     - validate-ipmi
 
-- include: quickstart.yml
+- name:  Install the undercloud
+  hosts: undercloud
+  gather_facts: no
+  roles:
+    - tripleo/undercloud
 
 - name:  copy over config files
   hosts: undercloud
