@@ -15,6 +15,8 @@
   roles:
     - overcloud-prep-config
 
+- name:  Perpare the baremetal overcloud
+  hosts: undercloud
   gather_facts: no
   roles:
     - overcloud-prep-baremetal
@@ -67,7 +69,7 @@
       include_vars: "{{ local_working_dir }}/overcloud_deployment_result.json"
 
     # overcloud_deploy_result = ["failed", "passed"]
-     - name: did the deployment pass or fail?
+    - name: did the deployment pass or fail?
       debug: var=overcloud_deploy_result
       failed_when: overcloud_deploy_result == "failed"
 
