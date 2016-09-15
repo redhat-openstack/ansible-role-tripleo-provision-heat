@@ -7,6 +7,8 @@ release: mitaka
 undercloud_image_url: "http://buildlogs.cdn.centos.org/centos/7/cloud/x86_64/tripleo_images/{{ release }}/delorean/undercloud.qcow2"
 undercloud_key: "{{ local_working_dir }}/id_rsa_undercloud"
 
+libvirt_uri: qemu:///session
+
 node:
     prefix:
         - "{{ 1000 |random }}"

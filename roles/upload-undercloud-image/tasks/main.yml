@@ -87,6 +87,7 @@
           --run-command 'chmod 0600 {{ item.homedir }}/.ssh/authorized_keys'
       environment:
           LIBGUESTFS_BACKEND: direct
+          LIBVIRT_DEFAULT_URI: "{{ libvirt_uri }}"
       with_items:
           - homedir: /root
             owner: root
