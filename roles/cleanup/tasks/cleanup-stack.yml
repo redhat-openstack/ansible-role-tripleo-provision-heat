@@ -1,12 +1,10 @@
 - name: Remove stack
   os_stack:
       name: "{{ stack_name }}"
-      auth:
-          username: "{{ os_username }}"
-          password: "{{ os_password }}"
-          project_name: "{{ os_tenant_name }}"
-          auth_url: "{{ os_auth_url }}"
+      cloud: "{{ cloud_name }}"
       state: absent
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ local_working_dir }}/clouds.yaml"
   ignore_errors: true
 
 - name: Remove associated keypair
