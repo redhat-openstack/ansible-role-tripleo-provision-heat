@@ -15,14 +15,16 @@
   ignore_errors: true
   no_log: true
 
+- name: copy clouds.yaml file
+  template:
+      src: clouds.yaml.j2
+      dest: "{{ local_working_dir }}/clouds.yaml"
+      mode: 0755
+
 - name: Deploy stack
   os_stack:
       name: "{{ stack_name }}"
-      auth:
-          username: "{{ os_username }}"
-          password: "{{ os_password }}"
-          project_name: "{{ os_tenant_name }}"
-          auth_url: "{{ os_auth_url }}"
+      cloud: "{{ cloud_name}}"
       state: present
       template: "{{ heat_template }}"
       environment: "{{ environment_list }}"
