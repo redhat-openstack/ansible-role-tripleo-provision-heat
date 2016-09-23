@@ -25,3 +25,6 @@
   shell: >
       "{{ working_dir }}"/setup-undercloud-connectivity.sh
 
+- name: Set inventory values required
+  set_fact: hostvars['localhost'].ansible_private_key_file = {{ localhost_key_file }}
+

@@ -21,6 +21,7 @@ os_username: admin
 os_password: password
 os_tenant_name: admin
 os_auth_url: 'http://10.0.1.10:5000/v2.0'
+cloud_name: qeos7
 
 stack_name: 'oooq-{{ prefix }}stack'
 rc_file: /home/stack/overcloudrc
@@ -69,3 +70,5 @@ pvt_nameserver: 8.8.8.8
 external_interface: eth2
 external_interface_ip: 10.0.0.1
 external_interface_netmask: 255.255.255.0
+
+localhost_private_key: ~/.ssh/id_rsa
