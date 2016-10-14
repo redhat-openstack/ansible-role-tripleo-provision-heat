@@ -76,7 +76,7 @@
       export OS_AUTH_URL="{{ os_auth_url }}";
       {{ ovb_dir }}/bin/build-nodes-json --env {{ local_working_dir }}/{{ prefix }}env.yaml
   register: nodes_json
-#  no_log: true
+  no_log: true
 
 - name: Ensure directories exist for network-environment copy
   file:
