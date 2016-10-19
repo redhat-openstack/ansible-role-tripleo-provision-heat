@@ -15,4 +15,5 @@
       export OS_AUTH_URL="{{ os_auth_url }}";
       nova keypair-delete {{ prefix }}key
   ignore_errors: true
+  no_log: true
 
