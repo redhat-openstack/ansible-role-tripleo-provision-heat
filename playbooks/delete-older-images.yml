@@ -1,0 +1,4 @@
+- name: delete images older than the latest uploaded image
+  hosts: localhost
+  roles:
+    - { role: provision-heat/roles/delete-older-images }
