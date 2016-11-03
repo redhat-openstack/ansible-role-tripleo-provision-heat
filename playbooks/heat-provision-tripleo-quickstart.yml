@@ -77,10 +77,20 @@
       debug: var=overcloud_deploy_result
       failed_when: overcloud_deploy_result == "failed"
 
+# Validate the deployment
 - name:  validate the overcloud
   hosts: undercloud
   tags:
     - overcloud-validate
   gather_facts: no
   roles:
-    - tripleo-overcloud-validate
+    - { role: tripleo-overcloud-validate, when: test_ping == true }
+
+# Execute tempest against the overcloud deployment
+- name:  Execute tempest against the overcloud
+  hosts: undercloud
+  tags:
+    - overcloud-validate
+  gather_facts: no
+  roles:
+    - { role: tripleo-tempest, when: run_tempest == true }
