@@ -62,6 +62,8 @@ undercloud_image: '{{ prefix }}undercloud.qcow2'
 undercloud_flavor: m1.xlarge
 external_net:  '10.2.1.0/22'
 
+network_isolation_type: multi-nic
+
 mtu: 1350
 mtu_interface:
   - eth1

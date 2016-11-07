@@ -5,6 +5,26 @@
       dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
       mode: 0755
 
+- name: Add templates for multi-nic
+  blockinfile:
+    dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
+    insertafter: "## in baremetal-networks-all.yaml"
+    content: |
+      ## multi-nic
+        OS::OVB::BaremetalNetworks: {{ templates_dir }}/baremetal-networks-all.yaml
+        OS::OVB::BaremetalPorts: {{ templates_dir }}/baremetal-ports-all.yaml
+  when: network_isolation_type == 'multi-nic'
+
+- name: Add templates for public-bond
+  blockinfile:
+    dest: "{{ local_working_dir }}/{{ prefix }}env.yaml"
+    insertafter: "## in baremetal-networks-all.yaml"
+    content: |
+      ## public-bond
+        OS::OVB::BaremetalNetworks: {{ templates_dir }}/baremetal-networks-all.yaml
+        OS::OVB::BaremetalPorts: {{ templates_dir }}/baremetal-ports-public-bond.yaml
+  when: network_isolation_type == 'public-bond'
+
 - name: Add keypair
   shell: >
       export OS_USERNAME="{{ os_username }}";
