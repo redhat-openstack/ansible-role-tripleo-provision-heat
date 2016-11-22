@@ -32,7 +32,7 @@ Example Playbook
 
 Playbooks to call the deploy and cleanup related roles are included in this repo:
 
-- https://github.com/redhat-openstack/ansible-role-tripleo-provision-heat/blob/master/playbooks/deploy.yml
+- https://github.com/redhat-openstack/ansible-role-tripleo-provision-heat/blob/master/playbooks/deploy-stack.yml
 - https://github.com/redhat-openstack/ansible-role-tripleo-provision-heat/blob/master/playbooks/cleanup.yml
 - https://github.com/redhat-openstack/ansible-role-tripleo-provision-heat/blob/master/playbooks/heat-provision-tripleo-quickstart.yml
 

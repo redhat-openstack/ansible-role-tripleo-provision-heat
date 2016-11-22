@@ -1,5 +1,5 @@
 ---
-- include: deploy.yml
+- include: deploy-stack.yml
 
 - name: Validate IPMI and instackenv.json
   hosts: undercloud
